@@ -1,0 +1,39 @@
+{
+  "ignoreFiles": ["**/*"],
+  "overrides": [
+    {
+      "files": ["**/.css", "**/*.scss"],
+      "rules": {
+        "selector-class-pattern": [
+          "^(?<block>(?:[a-z][a-z0-9]*)(?:-[a-z0-9]+)*)(?:__(?<element>(?:[a-z][a-z0-9]*)(?:-[a-z0-9]+)*))?(?:--(?<modifier>(?:[a-z][a-z0-9]*)(?:-[a-z0-9]+)*))?$",
+          {
+            "message": "Expected class selector to follow BEM naming convention."
+          }
+        ],
+        "selector-pseudo-element-no-unknown": [true, { "ignorePseudoElements": ["ng-deep"] }],
+        "color-named": "never",
+        "font-weight-notation": "named-where-possible",
+        "declaration-no-important": true,
+        "max-nesting-depth": [4, { "ignore": ["blockless-at-rules", "pseudo-classes"] }]
+      }
+    },
+    {
+      "files": ["**/*.css"],
+      "extends": ["stylelint-config-standard", "stylelint-config-recess-order", "stylelint-config-prettier"],
+      "rules": {}
+    },
+    {
+      "files": ["**/*.scss"],
+      "extends": ["stylelint-config-standard-scss", "stylelint-config-recess-order", "stylelint-config-prettier"],
+      "rules": {
+        "scss/at-each-key-value-single-line": true,
+        "scss/at-function-named-arguments": "never",
+        "scss/at-mixin-named-arguments": ["never", { "ignore": ["single-argument"] }],
+        "scss/dollar-variable-colon-newline-after": "always-multi-line",
+        "scss/dollar-variable-colon-space-after": "always-single-line",
+        "scss/no-duplicate-dollar-variables": true
+      }
+    }
+  ],
+  "rules": {}
+}

@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["!**/*"],
-  "plugins": ["@nrwl/nx"],
+  "plugins": ["@nrwl/nx", "import", "no-null", "prefer-arrow", "unicorn"],
   "overrides": [
     {
       "files": ["*.ts"],
@@ -15,7 +15,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "singleFileNgrx",
+            "prefix": "app",
             "style": "camelCase"
           }
         ],
@@ -23,7 +23,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "single-file-ngrx",
+            "prefix": "app",
             "style": "kebab-case"
           }
         ]
