@@ -1,4 +1,5 @@
-import {Movie} from "../models/movie";
+import {EnvironmentProviders, inject, makeEnvironmentProviders} from "@angular/core";
+import {Actions, createEffect, ofType, provideEffects} from "@ngrx/effects";
 import {
   createActionGroup,
   createFeature,
@@ -8,24 +9,24 @@ import {
   props,
   provideState, Store
 } from "@ngrx/store";
-import {Actions, createEffect, ofType, provideEffects} from "@ngrx/effects";
-import {EnvironmentProviders, inject, makeEnvironmentProviders} from "@angular/core";
 import {catchError, exhaustMap, map, Observable, of} from "rxjs";
+
+import {Movie} from "../models/movie";
 import {MoviesService} from "../services/movies.service";
 
-export interface MoviesState {
+interface MoviesState {
   loading: boolean;
   collection: Movie[];
   currentMovieId: number | undefined;
 }
 
-export const INITIAL_STATE: MoviesState = {
+const initialState: MoviesState = {
   loading: false,
   collection: [],
   currentMovieId: undefined,
 };
 
-export const MOVIES_ACTIONS = createActionGroup({
+const moviesActions = createActionGroup({
   source: 'Movies',
   events: {
     search: props<{ searchTerm?: string }>(),
@@ -34,18 +35,18 @@ export const MOVIES_ACTIONS = createActionGroup({
   }
 });
 
-export const MOVIES_FEATURE = createFeature({
+const moviesFeature = createFeature({
   name: 'movies',
   reducer: createReducer(
-    INITIAL_STATE,
-    on(MOVIES_ACTIONS.search, (state) => {
+    initialState,
+    on(moviesActions.search, (state) => {
       return {
         ...state,
         loading: true,
         collection: [],
       };
     }),
-    on(MOVIES_ACTIONS.loaded, (state, { movies }) => {
+    on(moviesActions.loaded, (state, { movies }) => {
       return {
         ...state,
         loading: false,
@@ -53,7 +54,7 @@ export const MOVIES_FEATURE = createFeature({
         currentMovieId: undefined,
       };
     }),
-    on(MOVIES_ACTIONS.failed, (state) => {
+    on(moviesActions.failed, (state) => {
       return {
         ...state,
         loading: false,
@@ -75,20 +76,14 @@ export const MOVIES_FEATURE = createFeature({
   }
 });
 
-export const {
-  selectCollection,
-  selectCurrentMovie,
-  selectLoading
-} = MOVIES_FEATURE;
-
-export const search$ = createEffect((actions$ = inject(Actions)) => {
+const search$ = createEffect((actions$ = inject(Actions)) => {
   const service = inject(MoviesService);
   return actions$.pipe(
-    ofType(MOVIES_ACTIONS.search),
+    ofType(moviesActions.search),
     exhaustMap(({ searchTerm }) => {
       return service.findMovies(searchTerm).pipe(
-        map((movies) => MOVIES_ACTIONS.loaded({ movies })),
-        catchError(() => of(MOVIES_ACTIONS.failed({ error: 'Cannot load movies' })))
+        map((movies) => moviesActions.loaded({ movies })),
+        catchError(() => of(moviesActions.failed({ error: 'Cannot load movies' })))
       );
     })
   );
@@ -96,7 +91,7 @@ export const search$ = createEffect((actions$ = inject(Actions)) => {
 
 export function provideMoviesFeature(): EnvironmentProviders {
   return makeEnvironmentProviders([
-    provideState(MOVIES_FEATURE),
+    provideState(moviesFeature),
     provideEffects({ search$ }),
   ]);
 }
@@ -110,11 +105,16 @@ export interface MoviesFeature {
 
 export function injectMoviesFeature(): MoviesFeature {
   const store = inject(Store);
+  const {
+    selectCollection,
+    selectCurrentMovie,
+    selectLoading
+  } = moviesFeature;
 
   return {
     loading$: store.select(selectLoading),
     movies$: store.select(selectCollection),
     currentMovie$: store.select(selectCurrentMovie),
-    search: (searchTerm) => store.dispatch(MOVIES_ACTIONS.search({ searchTerm })),
+    search: (searchTerm) => store.dispatch(moviesActions.search({ searchTerm })),
   };
 }
