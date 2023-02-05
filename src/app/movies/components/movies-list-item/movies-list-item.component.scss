@@ -1,0 +1,11 @@
+:host {
+  @apply block h-full;
+}
+
+mat-card {
+  @apply h-full;
+
+  mat-card-content {
+    @apply flex-auto;
+  }
+}

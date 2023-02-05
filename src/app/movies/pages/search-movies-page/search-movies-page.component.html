@@ -1,1 +1,2 @@
-<p>search-movies-page works!</p>
+<app-search-movies-box (search)="onSearch($event)"/>
+<app-movies-list [movies]="movies$ | ngrxPush" (favoriteMovie)="onFavoriteMovie($event)"/>

@@ -1,0 +1,16 @@
+mat-card {
+  --mdc-elevated-card-container-shape: 0;
+
+  mat-card-header,
+  mat-card-actions {
+    @apply justify-center;
+  }
+
+  mat-card-content {
+    @apply flex justify-center mt-4;
+  }
+}
+
+.form-field {
+  @apply w-full min-w-[250px] max-w-[500px];
+}
