@@ -63,7 +63,8 @@
           "browserTarget": "single-file-ngrx:build:production"
         },
         "development": {
-          "browserTarget": "single-file-ngrx:build:development"
+          "browserTarget": "single-file-ngrx:build:development",
+          "proxyConfig": "proxy-conf.json"
         }
       },
       "defaultConfiguration": "development"

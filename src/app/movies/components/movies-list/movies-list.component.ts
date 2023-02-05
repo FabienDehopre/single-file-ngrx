@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {Movie} from "../../models/movie";
 import {MoviesListItemComponent} from "../movies-list-item/movies-list-item.component";
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
   standalone: true,
@@ -10,11 +10,12 @@ import {NgForOf} from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MoviesListItemComponent,
-    NgForOf
+    NgForOf,
+    NgIf
   ],
 })
 export class MoviesListComponent {
-  @Input() movies: Movie[] = [];
+  @Input() movies?: Movie[];
   @Output() readonly favoriteMovie = new EventEmitter<Movie>();
 
   readonly movieTrackBy = (index: number, movie: Movie) => movie.id;

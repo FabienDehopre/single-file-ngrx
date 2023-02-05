@@ -1,9 +1,9 @@
-import {inject, Inject} from "@angular/core";
+import {inject, Injectable} from "@angular/core";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Movie} from "../models/movie";
 
-@Inject({ providedIn: 'root' })
+@Injectable({ providedIn: 'root' })
 export class MoviesService {
   private readonly http = inject(HttpClient);
 
@@ -13,10 +13,10 @@ export class MoviesService {
       params = params.set('q', searchTerm);
     }
 
-    return this.http.get<Movie[]>('/movies', { params });
+    return this.http.get<Movie[]>('/api/movies', { params });
   }
 
   markAsFavorite(movie: Movie): Observable<Movie> {
-    return this.http.patch<Movie>(`/movies/${movie.id}`, { favorite: true });
+    return this.http.patch<Movie>(`/api/movies/${movie.id}`, { favorite: true });
   }
 }

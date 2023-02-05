@@ -1,4 +1,4 @@
-<ul role="list" class="mx-3 my-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+<ul *ngIf="movies" role="list" class="mx-3 my-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
   <li *ngFor="let movie of movies; trackBy: movieTrackBy" class="col-span-1">
     <app-movies-list-item [movie]="movie" (favorite)="favoriteMovie.emit($event)"/>
   </li>

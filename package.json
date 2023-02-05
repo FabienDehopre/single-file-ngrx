@@ -5,7 +5,7 @@
   "scripts": {
     "start": "concurrently --kill-others --kill-others-on-fail \"npm:start-*\"",
     "start-frontend": "nx serve",
-    "start-backend": "json-server --watch db.json",
+    "start-backend": "json-server --watch db.json --routes routes.json",
     "build": "nx build",
     "test": "nx test"
   },
