@@ -28,7 +28,10 @@
     "@ngrx/store": "^15.2.1",
     "@ngrx/store-devtools": "^15.2.1",
     "@nrwl/angular": "15.6.3",
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.21",
     "rxjs": "~7.5.0",
+    "tailwindcss": "^3.2.4",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },
