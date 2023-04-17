@@ -32,6 +32,6 @@ export class SearchMoviesPageComponent implements OnInit {
   }
 
   onFavoriteMovie(movie: Movie): void {
-    // TODO
+    this.facade.toggleFavorite(movie);
   }
 }

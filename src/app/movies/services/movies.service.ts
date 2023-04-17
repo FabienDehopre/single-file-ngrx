@@ -16,7 +16,7 @@ export class MoviesService {
     return this.http.get<Movie[]>('/api/movies', { params });
   }
 
-  markAsFavorite(movie: Movie): Observable<Movie> {
-    return this.http.patch<Movie>(`/api/movies/${movie.id}`, { favorite: true });
+  toggleFavorite(movie: Movie): Observable<Movie> {
+    return this.http.patch<Movie>(`/api/movies/${movie.id}`, { favorite: !movie.favorite });
   }
 }

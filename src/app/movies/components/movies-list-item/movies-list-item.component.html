@@ -6,6 +6,6 @@
     <p>{{ movie?.plot }}</p>
   </mat-card-content>
   <mat-card-actions align="end">
-    <button mat-raised-button>Favorite</button>
+    <button mat-raised-button (click)="favorite.emit(movie)">{{ movie?.favorite ? 'Unfavorite' : 'Favorite' }}</button>
   </mat-card-actions>
 </mat-card>

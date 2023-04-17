@@ -9,10 +9,11 @@ import {
   props,
   provideState, Store
 } from "@ngrx/store";
-import {catchError, exhaustMap, map, Observable, of} from "rxjs";
+import {catchError, concatMap, exhaustMap, map, Observable, of, tap} from "rxjs";
 
 import {Movie} from "../models/movie";
 import {MoviesService} from "../services/movies.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 interface MoviesState {
   loading: boolean;
@@ -29,9 +30,12 @@ const initialState: MoviesState = {
 const moviesActions = createActionGroup({
   source: 'Movies',
   events: {
-    search: props<{ searchTerm?: string }>(),
-    loaded: props<{ movies: Movie[] }>(),
-    failed: props<{ error: string }>(),
+    'Search': props<{ searchTerm?: string }>(),
+    'Loaded': props<{ movies: Movie[] }>(),
+    'Failed': props<{ error: string }>(),
+    'Toggle Favorite': props<{ movie: Movie }>(),
+    'Toggle Favorite Success': props<{ movie: Movie }>(),
+    'Toggle Favorite Failed': props<{ error: string }>()
   }
 });
 
@@ -61,6 +65,18 @@ const moviesFeature = createFeature({
         collection: [],
         currentMovieId: undefined,
       };
+    }),
+    on(moviesActions.toggleFavoriteSuccess, (state, {movie}) => {
+      return {
+        ...state,
+        collection: state.collection.map(m => {
+          if (m.id === movie.id) {
+            return movie;
+          }
+
+          return m;
+        }),
+      };
     })
   ),
   extraSelectors: ({ selectCollection, selectCurrentMovieId }) => {
@@ -89,10 +105,37 @@ const search$ = createEffect((actions$ = inject(Actions)) => {
   );
 }, { functional: true });
 
+const toggleFavorite$ = createEffect((actions$ = inject(Actions)) => {
+  const service = inject(MoviesService);
+  return actions$.pipe(
+    ofType(moviesActions.toggleFavorite),
+    concatMap(({ movie }) => {
+      return service.toggleFavorite(movie).pipe(
+        map((result) =>  moviesActions.toggleFavoriteSuccess({ movie: result })),
+        catchError(() => of(moviesActions.toggleFavoriteFailed({ error: 'Error toggling favorite' })))
+      );
+    })
+  );
+}, { functional: true });
+
+const errorHandling$ = createEffect((actions$ = inject(Actions)) => {
+  const matSnackBar = inject(MatSnackBar);
+  return actions$.pipe(
+    ofType(moviesActions.failed, moviesActions.toggleFavoriteFailed),
+    tap(({ error }) => {
+      matSnackBar.open(error, undefined, {
+        duration: 5000,
+        panelClass: 'mat-mdc-snackbar-error',
+        politeness: 'assertive',
+      });
+    })
+  );
+}, { functional: true, dispatch: false });
+
 export function provideMoviesFeature(): EnvironmentProviders {
   return makeEnvironmentProviders([
     provideState(moviesFeature),
-    provideEffects({ search$ }),
+    provideEffects({ search$, toggleFavorite$, errorHandling$ }),
   ]);
 }
 
@@ -101,6 +144,7 @@ export interface MoviesFeature {
   movies$: Observable<Movie[]>;
   currentMovie$: Observable<Movie | undefined>;
   search: (searchTerm?: string) => void;
+  toggleFavorite: (movie: Movie) => void;
 }
 
 export function injectMoviesFeature(): MoviesFeature {
@@ -116,5 +160,6 @@ export function injectMoviesFeature(): MoviesFeature {
     movies$: store.select(selectCollection),
     currentMovie$: store.select(selectCurrentMovie),
     search: (searchTerm) => store.dispatch(moviesActions.search({ searchTerm })),
+    toggleFavorite: (movie) => store.dispatch(moviesActions.toggleFavorite({ movie })),
   };
 }

@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.mat-mdc-snackbar-error {
+  --mat-mdc-snack-bar-button-color: #ff4081;
+  --mdc-snackbar-container-color: #333333;
+  --mdc-snackbar-supporting-text-color: rgba(255, 255, 255, .87);
+}

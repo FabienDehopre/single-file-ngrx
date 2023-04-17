@@ -1,6 +1,8 @@
 import {Routes} from "@angular/router";
 import {provideMoviesFeature} from "./store/movies";
 import {SearchMoviesPageComponent} from "./pages/search-movies-page/search-movies-page.component";
+import {importProvidersFrom} from "@angular/core";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 export const MOVIES_ROUTES: Routes = [
   {
@@ -8,7 +10,8 @@ export const MOVIES_ROUTES: Routes = [
     pathMatch: 'full',
     component: SearchMoviesPageComponent,
     providers: [
-      provideMoviesFeature()
+      provideMoviesFeature(),
+      importProvidersFrom(MatSnackBarModule)
     ]
   }
 ];
